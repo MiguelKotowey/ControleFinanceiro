@@ -10,6 +10,7 @@
     <!-- Remova as referências WebAssembly -->
     <!-- Mantenha estas se quiser Radzen -->
     <PackageReference Include="Radzen.Blazor" Version="4.27.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
