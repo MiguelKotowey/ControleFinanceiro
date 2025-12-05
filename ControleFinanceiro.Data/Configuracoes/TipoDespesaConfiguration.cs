@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace ControleFinanceiro.Data.Configuracoes
 {
-    public class TiposDespesaConfiguration : IEntityTypeConfiguration<TipoDespesa>
+    public class TipoDespesaConfiguration : IEntityTypeConfiguration<TipoDespesa>
     {
         public void Configure(EntityTypeBuilder<TipoDespesa> builder)
         {
-            builder.ToTable("TiposDespesa");
+            builder.ToTable("TipoDespesa");
 
             builder.HasKey(t => t.Id);
 

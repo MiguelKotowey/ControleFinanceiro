@@ -8,11 +8,11 @@ namespace ControleFinanceiro.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TiposDespesaController : ControllerBase
+    public class TipoDespesaController : ControllerBase
     {
         private readonly IRepository<TipoDespesa> _repository;
 
-        public TiposDespesaController(IRepository<TipoDespesa> repository)
+        public TipoDespesaController(IRepository<TipoDespesa> repository)
         {
             _repository = repository;
         }

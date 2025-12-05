@@ -1,0 +1,89 @@
+﻿@page "/tipos-despesa"
+@using ControleFinanceiro.Core.DTOs
+@using ControleFinanceiro.Web.Services
+@inject ITipoDespesaService TipoDespesaService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Tipos de Despesa</PageTitle>
+
+<h3>Tipos de Despesa</h3>
+
+<div class="mb-3">
+    <a href="/tipos-despesa/cadastro" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Novo Tipo
+    </a>
+</div>
+
+@if (tiposDespesa == null)
+{
+    <p>Carregando...</p>
+}
+else if (!tiposDespesa.Any())
+{
+    <div class="alert alert-info">
+        Nenhum tipo de despesa cadastrado.
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tipo in tiposDespesa)
+            {
+                <tr>
+                    <td>@tipo.Descricao</td>
+                    <td>
+                        @if (tipo.Ativo)
+                        {
+                            <span class="badge bg-success">Ativo</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inativo</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/tipos-despesa/editar/@tipo.Id" class="btn btn-sm btn-primary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarExclusao(tipo)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<TipoDespesaDTO>? tiposDespesa;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarTiposDespesa();
+    }
+
+    private async Task CarregarTiposDespesa()
+    {
+        tiposDespesa = await TipoDespesaService.GetAllAsync();
+    }
+
+    private async Task ConfirmarExclusao(TipoDespesaDTO tipo)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", $"Deseja excluir o tipo '{tipo.Descricao}'?"))
+        {
+            await TipoDespesaService.DeleteAsync(tipo.Id);
+            await CarregarTiposDespesa();
+        }
+    }
+}

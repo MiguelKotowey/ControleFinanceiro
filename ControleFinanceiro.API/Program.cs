@@ -18,6 +18,21 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 var app = builder.Build();
 
+// Adicione CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorApp",
+        builder => builder
+            .WithOrigins("https://localhost:7072") // Porta do seu Blazor WebAssembly
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
+// E no app pipeline (antes de app.MapControllers())
+app.UseCors("AllowBlazorApp");
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

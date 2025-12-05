@@ -15,13 +15,13 @@ namespace ControleFinanceiro.Data
         {
         }
 
-        public DbSet<TipoDespesa> TiposDespesa { get; set; }
+        public DbSet<TipoDespesa> TipoDespesa { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new TiposDespesaConfiguration());
+            modelBuilder.ApplyConfiguration(new TipoDespesaConfiguration());
         }
     }
 }

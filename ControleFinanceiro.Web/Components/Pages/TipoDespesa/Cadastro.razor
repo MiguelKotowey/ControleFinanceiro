@@ -1,0 +1,95 @@
+﻿@page "/tipos-despesa/cadastro"
+@page "/tipos-despesa/editar/{id:int}"
+@using ControleFinanceiro.Core.DTOs
+@using ControleFinanceiro.Web.Services
+@inject ITipoDespesaService TipoDespesaService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Tipos de Despesa</PageTitle>
+
+<h3>@(Id == 0 ? "Novo Tipo de Despesa" : "Editar Tipo de Despesa")</h3>
+
+<EditForm Model="@Model" OnValidSubmit="@Salvar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="descricao" class="form-label">Descrição</label>
+        <InputTextArea id="descricao" @bind-Value="@Model.Descricao" class="form-control" rows="3" />
+    </div>
+
+    @if (Id > 0)
+    {
+        <div class="mb-3 form-check">
+            <InputCheckbox id="ativo" @bind-Value="@Ativo" class="form-check-input" />
+            <label for="ativo" class="form-check-label">Ativo</label>
+        </div>
+    }
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary me-2">
+            <i class="bi bi-save"></i> Salvar
+        </button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private CreateTipoDespesaDTO Model { get; set; } = new();
+    private bool Ativo { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            await CarregarTipoDespesa();
+        }
+    }
+
+    private async Task CarregarTipoDespesa()
+    {
+        var tipoDespesa = await TipoDespesaService.GetByIdAsync(Id);
+        if (tipoDespesa != null)
+        {
+            Model.Descricao = tipoDespesa.Descricao;
+            Ativo = tipoDespesa.Ativo;
+        }
+    }
+
+    private async Task Salvar()
+    {
+        try
+        {
+            if (Id == 0)
+            {
+                await TipoDespesaService.CreateAsync(Model);
+            }
+            else
+            {
+                var updateDto = new UpdateTipoDespesaDTO
+                {
+                    Descricao = Model.Descricao,
+                    Ativo = Ativo
+                };
+                await TipoDespesaService.UpdateAsync(Id, updateDto);
+            }
+
+            NavigationManager.NavigateTo("/tipos-despesa");
+        }
+        catch (Exception ex)
+        {
+            // Aqui você pode adicionar um toast ou mensagem de erro
+            Console.WriteLine($"Erro ao salvar: {ex.Message}");
+        }
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/tipos-despesa");
+    }
+}
